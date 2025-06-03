@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro - GameHub</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+    <h1>Cadastro</h1>
+    <form id="cadastroForm">
+        <input type="text" id="nome" placeholder="Nome" required><br>
+        <input type="email" id="email" placeholder="Email" required><br>
+        <input type="password" id="senha" placeholder="Senha" required><br>
+        <input type="file" id="avatar"><br>
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <script>
+        const form = document.getElementById('cadastroForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('nome', document.getElementById('nome').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('senha', document.getElementById('senha').value);
+            formData.append('avatar', document.getElementById('avatar').files[0]);
+
+            const res = await fetch('/api/cadastrar', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await res.json();
+            if (data.status === 'sucesso') {
+                alert('Cadastrado com sucesso');
+                window.location.href = '/login.html';
+            } else {
+                alert(data.mensagem);
+            }
+        });
+    </script>
+</body>
+</html>

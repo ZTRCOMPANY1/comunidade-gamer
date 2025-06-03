@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Admin - GameHub</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+    <h1>Painel Administrativo</h1>
+
+    <h2>Mensagens</h2>
+    <ul id="listaMensagens"></ul>
+
+    <h2>Usuários</h2>
+    <ul id="listaUsuarios"></ul>
+
+    <script>
+        function carregarMensagens() {
+            fetch('/api/mensagens')
+                .then(res => res.json())
+                .then(mensagens => {
+                    const lista = document.getElementById('listaMensagens');
+                    lista.innerHTML = '';
+                    mensagens.forEach(msg => {
+                        const li = document.createElement('li');
+                        li.textContent = `${msg.usuario}: ${msg.mensagem} (${msg.data})`;
+                        const btn = document.createElement('button');
+                        btn.textContent = 'Apagar';
+                        btn.onclick = () => {
+                            fetch(`/api/mensagens/${msg.id}`, { method: 'DELETE' })
+                                .then(() => carregarMensagens());
+                        };
+                        li.appendChild(btn);
+                        lista.appendChild(li);
+                    });
+                });
+        }
+
+          function carregarUsuarios() {
+        fetch('/api/usuarios')
+            .then(res => res.json())
+            .then(usuarios => {
+                const lista = document.getElementById('listaUsuarios');
+                lista.innerHTML = '';
+                usuarios.forEach(u => {
+                    const li = document.createElement('li');
+                    li.textContent = `${u.nome} (ID: ${u.id})`;
+
+                    const btn = document.createElement('button');
+                    btn.textContent = 'Excluir';
+                    btn.onclick = () => {
+                        const motivo = prompt(`Motivo para excluir ${u.nome}:`, 'Violação das regras');
+                        if (motivo) {
+                            fetch(`/api/usuarios/${u.id}?motivo=${encodeURIComponent(motivo)}`, { method: 'DELETE' })
+                                .then(() => carregarUsuarios());
+                        }
+                    };
+                    li.appendChild(btn);
+                    lista.appendChild(li);
+                });
+            });
+    }
+
+        carregarMensagens();
+        carregarUsuarios();
+    </script>
+</body>
+</html>

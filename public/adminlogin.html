@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login - GameHub</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+    <h1>Login Admin</h1>
+    <input type="text" id="usuario" placeholder="Usuário">
+    <input type="password" id="senha" placeholder="Senha">
+    <button onclick="loginAdmin()">Entrar</button>
+
+    <script>
+        function loginAdmin() {
+            const usuario = document.getElementById('usuario').value;
+            const senha = document.getElementById('senha').value;
+
+            fetch('/api/adminlogin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usuario, senha })
+            })
+            .then(res => {
+                if (res.ok) return res.json();
+                else throw new Error('Credenciais inválidas');
+            })
+            .then(() => {
+                window.location.href = '/paineladmin.html';
+            })
+            .catch(err => alert(err.message));
+        }
+    </script>
+</body>
+</html>

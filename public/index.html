@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>GameHub - Chat</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Chat</h1>
+    <ul id="mensagens"></ul>
+    <form id="form">
+        <input id="input" autocomplete="off"><button>Enviar</button>
+    </form>
+
+    <script>
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+        if (!usuario) {
+            alert('Faça login primeiro!');
+            window.location.href = '/login.html';
+        }
+
+        const socket = io();
+        socket.emit('join', usuario);
+
+        socket.on('chatMessage', msg => {
+            const item = document.createElement('li');
+            item.textContent = msg;
+            document.getElementById('mensagens').appendChild(item);
+        });
+
+        socket.on('desconectado', motivo => {
+            alert('Você foi desconectado: ' + motivo);
+            localStorage.removeItem('usuario');
+            window.location.href = '/login.html';
+        });
+
+        document.getElementById('form').addEventListener('submit', e => {
+            e.preventDefault();
+            const input = document.getElementById('input');
+            if (input.value) {
+                socket.emit('chatMessage', input.value);
+                input.value = '';
+            }
+        });
+    </script>
+</body>
+</html>

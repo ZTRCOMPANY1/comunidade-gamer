@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - GameHub</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+    <h1>Login</h1>
+    <input type="text" id="nome" placeholder="Seu nome">
+    <button onclick="login()">Entrar</button>
+
+    <script>
+        function login() {
+            const nome = document.getElementById('nome').value;
+            if (!nome) {
+                alert('Digite seu nome');
+                return;
+            }
+
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome })
+            })
+            .then(res => res.json())
+            .then(data => {
+                localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                window.location.href = '/index.html';
+            });
+        }
+    </script>
+</body>
+</html>
